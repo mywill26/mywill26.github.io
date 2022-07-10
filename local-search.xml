@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>myking 框架</title>
+    <link href="/2022/07/10/myking/"/>
+    <url>/2022/07/10/myking/</url>
+    
+    <content type="html"><![CDATA[<ul><li><em><a href="https://github.com/mywill26/myking.git">github</a></em></li><li><em>框架开源由我1人开发维护，欢迎感兴趣的同道交流或提交 PR</em></li><li><em>框架已支撑京东司南平台线上10个重业务流程的日常运行，目前流程运行稳定，日均单量千单以上</em></li></ul><p>企业级项目里，流程的建设是必不可少的<br>一般做法是对接一个已有的开源工作流引擎<br>（工作流引擎的建设不在本篇的讨论范围，我会放到另一篇文章讲）<br>流程建设的痛点包括：</p><ul><li>流程业务复杂，经常变更，表单建设耗时，开发周期长</li><li>各流程的表单数据都需要单独查询处理</li><li>各流程节点可能需要定制不同的表单数据展示</li><li>一般需要为各个流程单独定制待办及查询列表</li><li>…</li></ul><hr><h3 id="框架概述"><a href="#框架概述" class="headerlink" title="框架概述"></a>框架概述</h3><ul><li>可对接几乎所有基于 BPMN2.0 标准的工作流引擎，比如 activiti, flowable, camuda 等</li><li>后端流程业务数据处理 &amp;&amp; 接前端通用视图组件渲染做到字段级几乎完全配置化</li><li>增加字段、查询条件、列表展示列等日常需求，前后端无需任何改动上线，配置后即可自动动态渲染</li><li>开发者只需关注流程及节点的业务代码编写</li></ul><hr><h3 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h3><ol><li>引入依赖</li></ol><p>以spring boot starter的形式引入应用  </p><ul><li>gradle</li></ul>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs code">implementation &#x27;com.jd.mycx26:myking-spring-boot-starter:version&#x27;<br></code></pre></td></tr></table></figure><ul><li>maven</li></ul>  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.jd.mycx26<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>myking-spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>version<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure><ol start="2"><li><p>至少实例化一个默认的 <em><strong>javax.sql.Datasource</strong></em><br>框架内部用到数据库，实现无所谓，HikariDataSource，DruidDataSource等<br>推荐 Hikari，如其名的光速，性能上较 Druid 更强，目前最为优秀的数据库连接池</p></li><li><p>至少实例化一个主的 <em><strong>org.springframework.cache.CacheManager</strong></em><br>因为框架内部用到缓存，缓存框架无所谓，Redis, Ehcache等均可</p></li><li><p>必须实现 <em><strong>com.mycx26.base.process.service.ProcEngineService</strong></em> 接口为单例供框架注入<br>框架通过该服务和工作流引擎交互<br>不同的工作流引擎可以有自己的实现，比如京东的流程中心OA（基于activiti），flowable等</p></li></ol><hr><h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>todo</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>technology</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>流程</tag>
+      
+      <tag>数据处理</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>mybatch 框架</title>
+    <link href="/2022/07/10/mybatch/"/>
+    <url>/2022/07/10/mybatch/</url>
+    
+    <content type="html"><![CDATA[<ul><li><em><a href="https://github.com/mywill26/mybatch.git">github</a></em></li><li><em>框架开源由我1人开发维护，欢迎感兴趣的同道交流或提交 PR</em></li><li><em>框架已支撑京东司南平台线上批处理模块的日常运行，日均导入、导出数据量在百万级别</em></li></ul><p>企业级项目里，excel的导入导出需求是十分常见的<br>一般做法都会基于 <a href="http://poi.apache.org/">POI</a> 或者阿里的 <a href="https://easyexcel.opensource.alibaba.com/">EasyExcel</a> 处理<br>数据量较大时，通常会遇到以下问题：</p><ul><li>任务跑死没有结果，只能通过线上日志排查</li><li>同步阻塞或单线程处理IO密集型任务，速度较慢</li><li>导入导出的字段经常需要增减，逻辑经常变化，需要修改代码</li><li>…</li></ul><hr><h3 id="框架概述"><a href="#框架概述" class="headerlink" title="框架概述"></a>框架概述</h3><ul><li>框架多线程、少阻塞地处理导入导出任务，性能较高</li><li>适用于导入十分频繁且数据量较大场景（几十万至百万）</li><li>导入导出基于模板字段级完全配置化，支持自定义校验和写入逻辑</li><li>导出支持同时从 <em><strong>mapper sql</strong></em> 和已有业务方法两种方式抽取数据</li><li>…</li></ul><hr><h3 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h3><ol><li>引入依赖</li></ol><p>以spring boot starter的形式引入应用</p><ul><li>gradle</li></ul>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs code">implementation &#x27;com.jd.mycx26:mybatch-spring-boot-starter:version&#x27;<br></code></pre></td></tr></table></figure><ul><li>maven</li></ul>  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.jd.mycx26<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>mybatch-spring-boot-starter<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>version<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure><ol start="2"><li><p>至少实例化一个默认的 <em><strong>javax.sql.Datasource</strong></em><br>框架内部用到数据库，实现无所谓，HikariDataSource，DruidDataSource等<br>推荐 Hikari，如其名的光速，性能上较 Druid 更强，目前最为优秀的数据库连接池</p></li><li><p>必须实现 <em><strong>com.mycx26.base.service.file.CloudFileService</strong></em> 接口为单例供框架启动注入<br>框架很多场景涉及文件处理<br>比如导入校验错误的 excel 需要上传到云存储保存供用户下载查看等<br>实现无所谓，比如京东的JFS，腾讯的CFS等</p></li></ol><hr><h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>todo</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>technology</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>excel</tag>
+      
+      <tag>批处理</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
